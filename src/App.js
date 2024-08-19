@@ -1,24 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect} from 'react';
+import UrlForm from './UrlForm';
+import axios from 'axios';
+
 
 function App() {
+  useEffect(() => {
+    axios.get('/csrf-token')
+      .then(response => {
+        let csrfMetaTag = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfMetaTag) {
+          csrfMetaTag = document.createElement('meta');
+          csrfMetaTag.setAttribute('name', 'csrf-token');
+          document.head.appendChild(csrfMetaTag);
+        }
+        csrfMetaTag.setAttribute('content', response.data.csrfToken);
+      })
+      .catch(error => {
+        console.error('Error fetching CSRF token:', error);
+      });
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Metadata Fetcher</h1>
+      <UrlForm />
     </div>
   );
 }
