@@ -25,8 +25,8 @@ const corsOptions = {
 
 
 const limiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 5,
+    windowMs: 120 * 1000,
+    max: 100,
     message: "Too many requests from this IP, please try again after a minute"
 });
 const csrfProtection = csrf({ cookie: true });
@@ -59,7 +59,7 @@ app.get('/', csrfProtection, (req, res) => {
       </html>
     `);
   });
-  
+
 app.get('/csrf-token', csrfProtection, (req, res) => {
     res.json({ csrfToken: req.csrfToken() });
   });
