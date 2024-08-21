@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, Typography, TextField, IconButton, Box } from '@mui/material';
+import { Button, Typography, TextField, IconButton, Box, Alert } from '@mui/material';
 import UrlData from './components/urlData';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
@@ -11,25 +11,30 @@ const MainPage = () => {
     const [urls, setUrls] = useState(['']);
     const [metadata, setMetadata] = useState([]);
     const [error, setError] = useState('');
+    const [warning, setWarning] = useState('Fill in the URL field');
     const [loading, setLoading] = useState(false);
 
     const handleUrlChange = (index, event) => {
         const newUrls = [...urls];
         newUrls[index] = event.target.value;
+        newUrls.some((url) => url === '') ? setWarning('Fill in the URL field') : setWarning('');
         setUrls(newUrls);
     };
 
     const addUrlInput = () => {
+        setWarning('Fill in the URL field');
         if (urls.length < 3) {
             setUrls([...urls, '']);
-        } else {
-            setError('You can only enter up to 3 URLs.');
+            if (urls.length === 2) {
+                setWarning('Fill in the URL field | You can only add up to 3 URLs');
+            }
         }
     };
 
     const removeUrlInput = (index) => {
         const newUrls = urls.filter((_, i) => i !== index);
         setUrls(newUrls);
+        newUrls.some((url) => url === '') ? setWarning('Fill in the URL field') : setWarning('');
         if (urls.length <= 3) {
             setError('');
         }
@@ -54,23 +59,24 @@ const MainPage = () => {
     };
 
     return (
-        <div
-            style={{
+        <Box
+            sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 marginLeft: '5%',
                 width: '90%',
-                backgroundColor: 'offwhite',
                 height: '100%'
             }}
+            bgcolor='background.default'
         >
-            <h1 style={{ alignSelf: 'center', color: 'gray' }}>Metadata Fetcher</h1>
-            <form
+            <Typography variant='h3' sx={{ alignSelf: 'center', color: 'primary' }}>Metadata Fetcher</Typography>
+            <Box
+                component='form'
                 onSubmit={handleSubmit}
-                style={{ display: 'flex', height: '40%', borderBottom: 'solid lightgray 2px' }}
+                sx={{ display: 'flex', height: '40%', borderBottom: 'solid lightgray 2px' }}
             >
                 <Box
-                    style={{
+                    sx={{
                         width: '80%',
                         display: 'flex',
                         flexDirection: 'column',
@@ -80,9 +86,9 @@ const MainPage = () => {
                     }}
                 >
                     {urls.map((url, index) => (
-                        <div key={index} style={{ marginTop: '.5rem', display: 'flex', alignItems: 'center', width: '90%' }}>
+                        <Box key={index} sx={{ marginTop: '.5rem', display: 'flex', alignItems: 'center', width: '90%' }}>
                             <TextField
-                                style={{ width: '100%' }}
+                                sx={{ width: '100%' }}
                                 label="URL"
                                 value={url}
                                 onChange={(e) => handleUrlChange(index, e)}
@@ -92,11 +98,11 @@ const MainPage = () => {
                                     <ClearIcon />
                                 </IconButton>
                             )}
-                        </div>
+                        </Box>
                     ))}
                 </Box>
                 <Box
-                    style={{
+                    sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-evenly',
@@ -110,9 +116,9 @@ const MainPage = () => {
                         onClick={addUrlInput}
                         startIcon={<AddIcon />}
                         disabled={urls.length > 2}
-                        style={{ width: '10rem', height: '2.5rem' }}
+                        sx={{ width: '15rem', height: '2.5rem' }}
                     >
-                        More URLs
+                        <Typography variant='button'>More URLs</Typography>
                     </Button>
                     <LoadingButton
                         type="submit"
@@ -120,23 +126,31 @@ const MainPage = () => {
                         loading={loading}
                         loadingPosition="end"
                         endIcon={<SendIcon />}
-                        style={{ width: '10rem', height: '2.5rem' }}
+                        sx={{ width: '15rem', height: '2.5rem' }}
                     >
-                        Submit
+                        <Typography variant='button'>Submit</Typography>
                     </LoadingButton>
                 </Box>
-            </form>
+            </Box>
 
-            {error && <Typography style={{ color: 'error.main' }}>{error}</Typography>}
+            {error && <Alert sx={{marginTop: '2rem'}} severity="error" onClose={() => setError('')}>{error}</Alert>}
+            {warning && <Alert sx={{marginTop: '2rem'}} severity="warning" onClose={() => setWarning('')}>{warning}</Alert>}
 
             {metadata.length > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '3rem', height:'50%' }}>
+                <Box 
+                    sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-evenly', 
+                        marginTop: '3rem', 
+                        height:'50%',
+                    }}
+                >
                     {metadata.map((data, index) => (
                         <UrlData key={index} item={data} />
                     ))}
-                </div>
+                </Box>
             )}
-        </div>
+        </Box>
     );
 };
 
