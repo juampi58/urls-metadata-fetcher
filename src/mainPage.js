@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Typography, TextField, IconButton, Box, Alert } from '@mui/material';
-import UrlData from './components/urlData';
+import DataCard from './components/DataCard/DataCard';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
 import SendIcon from '@mui/icons-material/Send';
@@ -146,7 +146,7 @@ const MainPage = () => {
                     }}
                 >
                     {metadata.map((data, index) => (
-                        <UrlData key={index} item={data} />
+                        <DataCard key={index} item={data} />
                     ))}
                 </Box>
             )}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, CardMedia } from '@mui/material';
 
-const UrlData = ({ item }) => {
+const DataCard = ({ item }) => {
     return (
         <Card sx={{ maxWidth: '30%', overflowY: 'scroll'}}>
             <CardMedia
@@ -22,4 +22,4 @@ const UrlData = ({ item }) => {
     );
 };
 
-export default UrlData;
+export default DataCard;
