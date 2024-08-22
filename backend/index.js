@@ -12,59 +12,54 @@ import cookieParser from 'cookie-parser';
 
 
 const app = express();
-app.set('trust proxy', 1 /* number of proxies between user and server */)
-app.use(cookieParser());
+app.set('trust proxy', 1 )
 const port = process.env.PORT || 5001;
-
-
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-};
-
-
-const limiter = rateLimit({
-    windowMs: 120 * 1000,
-    max: 100,
-    message: "Too many requests from this IP, please try again after a minute"
-});
-const csrfProtection = csrf({ cookie: true });
-
-app.use(bp.json());
-app.use(cors(corsOptions));
-app.use(limiter);
-app.use(helmet());
-app.use(csrfProtection);
 
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
-app.get('/', csrfProtection, (req, res) => {
-    const csrfToken = req.csrfToken(); // Generate the CSRF token
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>Your App</title>
-        <!-- Embed the CSRF token in a meta tag -->
-        <meta name="csrf-token" content="${csrfToken}">
-      </head>
-      <body>
-        <!-- Your HTML content here -->
-      </body>
-      </html>
-    `);
+const limiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute window
+    max: 100, // Cahnge this to 5 before handing in
+    message: "Too many requests from this IP, please try again after a minute", 
+    standardHeaders: true, 
+    legacyHeaders: false, 
   });
 
-app.get('/csrf-token', csrfProtection, (req, res) => {
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
+
+app.use(bp.json());
+app.use(limiter);
+
+app.use((err, req, res, next) => {
+    if (err.code === 'EBADCSRFTOKEN') {
+      console.error('Invalid CSRF Token:', req.headers['csrf-token']);
+      console.error('CSRF token validation failed');
+      return res.status(403).send('Invalid CSRF token');
+    }
+    next(err);
+  });
+
+app.get('/csrf-token', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
     res.json({ csrfToken: req.csrfToken() });
   });
 
-app.post('/fetch-metadata',[
+app.post('/fetch-metadata',csrfProtection,[
             body('urls').isArray().withMessage('URLs must be an array'),
             body('urls.*').isURL().withMessage('Each item must be a valid URL'),
         ], (req, res) => {
@@ -108,4 +103,5 @@ app.post('/fetch-metadata',[
         });
 });
 
+export default app;
   
