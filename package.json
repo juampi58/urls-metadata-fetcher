@@ -33,7 +33,8 @@
     "client": "react-scripts start",
     "test": "jest",
     "build": "react-scripts build",
-    "e2e": "jest e2e/metadata-fetcher.test.js"
+    "e2e": "jest e2e/metadata-fetcher.test.js",
+    "heroku-postbuild": "npm install && npm run build"
   },
   "jest": {
     "testPathIgnorePatterns": [
