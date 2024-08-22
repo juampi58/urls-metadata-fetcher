@@ -1,5 +1,7 @@
 
 import express from 'express';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import axios from 'axios';
 import bp from 'body-parser';
 import { JSDOM } from 'jsdom';
@@ -27,7 +29,7 @@ const corsOptions = {
 
 const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute window
-    max: 5, // Cahnge this to 5 before handing in
+    max: 100, // Cahnge this to 5 before handing in
     message: "Too many requests from this IP, please try again after a minute", 
     standardHeaders: true, 
     legacyHeaders: false, 
@@ -52,6 +54,18 @@ app.use((err, req, res, next) => {
       return res.status(403).send('Invalid CSRF token');
     }
     next(err);
+  });
+
+
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  
+  // Serve static files from the React app's build directory
+  app.use(express.static(join(__dirname, 'client', 'build')));
+  
+  // Define a route to serve the main HTML file
+  app.get('/', (req, res) => {
+    res.sendFile(join(__dirname, 'client', 'build', 'index.html'));
   });
 
 app.get('/csrf-token', (req, res) => {
