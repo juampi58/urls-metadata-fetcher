@@ -91,10 +91,11 @@ const MainPage = () => {
                                 sx={{ width: '100%' }}
                                 label="URL"
                                 value={url}
+                                name={'url'+(index+1)}
                                 onChange={(e) => handleUrlChange(index, e)}
                             />
                             {urls.length > 1 && (
-                                <IconButton onClick={() => removeUrlInput(index)}>
+                                <IconButton onClick={() => removeUrlInput(index)} id={`remove-url-input${index+1}`}>
                                     <ClearIcon />
                                 </IconButton>
                             )}
@@ -112,6 +113,7 @@ const MainPage = () => {
                     }}
                 >
                     <Button
+                        id="add-url-input"
                         variant="outlined"
                         onClick={addUrlInput}
                         startIcon={<AddIcon />}
@@ -133,8 +135,8 @@ const MainPage = () => {
                 </Box>
             </Box>
 
-            {error && <Alert sx={{marginTop: '2rem'}} severity="error" onClose={() => setError('')}>{error}</Alert>}
-            {warning && <Alert sx={{marginTop: '2rem'}} severity="warning" onClose={() => setWarning('')}>{warning}</Alert>}
+            {error && <Alert sx={{marginTop: '2rem'}} severity="error" onClose={() => setError('')} className="metadata-fetcher-error">{error}</Alert>}
+            {warning && <Alert sx={{marginTop: '2rem'}} severity="warning" onClose={() => setWarning('')}className='metadata-fetcher-warning'>{warning}</Alert>}
 
             {metadata.length > 0 && (
                 <Box 
@@ -146,7 +148,7 @@ const MainPage = () => {
                     }}
                 >
                     {metadata.map((data, index) => (
-                        <DataCard key={index} item={data} />
+                        <DataCard key={index} customKey={`metadata-card${index+1}`} item={data} />
                     ))}
                 </Box>
             )}

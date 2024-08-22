@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, CardContent, Typography, CardMedia } from '@mui/material';
 
-const DataCard = ({ item }) => {
+const DataCard = ({ customKey, item }) => {
     return (
-        <Card sx={{ maxWidth: '30%', overflowY: 'scroll'}}>
+        <Card sx={{ maxWidth: '30%', overflowY: 'scroll'}} className={customKey}>
             <CardMedia
                 component="img"
                 height="30%"
@@ -11,7 +11,7 @@ const DataCard = ({ item }) => {
                 alt={item.title}
             />
             <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="h5" component="div" className='title'>
                     {item.title}
                 </Typography>
                 <Typography variant="body2" color="text.primary">
