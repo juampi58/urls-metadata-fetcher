@@ -60,12 +60,10 @@ app.use((err, req, res, next) => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   
-  // Serve static files from the React app's build directory
-  app.use(express.static(join(__dirname, 'client', 'build')));
+  app.use(express.static(join(__dirname, '/build')));
   
-  // Define a route to serve the main HTML file
   app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, 'client', 'build', 'index.html'));
+    res.sendFile(join(__dirname, '../build', 'index.html'));
   });
 
 app.get('/csrf-token', (req, res) => {
