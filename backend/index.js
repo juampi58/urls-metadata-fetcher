@@ -57,14 +57,12 @@ app.use((err, req, res, next) => {
   });
 
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
   
-  app.use(express.static(join(__dirname, '/build')));
+app.use(express.static(join(__dirname, '/build')));
   
-  app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, '../build', 'index.html'));
-  });
+
 
 app.get('/csrf-token', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
@@ -114,6 +112,10 @@ app.post('/fetch-metadata',csrfProtection,[
             res.status(500).json({ error: 'An error occurred while fetching metadata' });
         });
 });
+
+app.get('*', (req, res) => {
+    res.sendFile(join(__dirname, '../build', 'index.html'));
+  });
 
 export default app;
   
