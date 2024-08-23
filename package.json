@@ -30,7 +30,7 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node backend/index.js",
-    "client": "react-scripts start",
+    "client": "react-scripts build",
     "test": "jest",
     "build": "react-scripts build",
     "e2e": "jest e2e/metadata-fetcher.test.js",

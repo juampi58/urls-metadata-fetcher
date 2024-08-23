@@ -15,12 +15,11 @@ import cookieParser from 'cookie-parser';
 
 const app = express();
 app.set('trust proxy', 1 )
-const port = process.env.PORT || 5001;
 
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+
+
+
 const corsOptions = {
     origin: '*',
     methods: ['GET', 'POST'],
@@ -116,6 +115,12 @@ app.post('/fetch-metadata',csrfProtection,[
 app.get('*', (req, res) => {
     res.sendFile(join(__dirname, '../build', 'index.html'));
   });
+
+const port = process.env.PORT || 5001;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
+
 
 export default app;
   
