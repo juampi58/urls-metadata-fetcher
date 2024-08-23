@@ -16,10 +16,6 @@ import cookieParser from 'cookie-parser';
 const app = express();
 app.set('trust proxy', 1 )
 
-
-
-
-
 const corsOptions = {
     origin: '*',
     methods: ['GET', 'POST'],
@@ -60,8 +56,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
   
 app.use(express.static(join(__dirname, '/build')));
-  
-
 
 app.get('/csrf-token', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
