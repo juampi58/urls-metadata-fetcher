@@ -2,15 +2,16 @@
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import bp from 'body-parser';
-import { JSDOM } from 'jsdom';
+import * as cheerio from 'cheerio';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import cors from 'cors';
 import { body, validationResult } from 'express-validator';
 import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
+
 
 
 const app = express();
@@ -74,27 +75,24 @@ app.post('/fetch-metadata',csrfProtection,[
     const { urls } = req.body;
 
     const metadataPromises = urls.map((url) => {
-        return axios.get(url, {
+        return fetch(url, {
+            method: 'GET',
             headers: {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }})
-            .then((response) => {
-                const dom = new JSDOM(response.data);
-                const { document } = dom.window;
-
-                const title = document.querySelector('title') ? document.querySelector('title').textContent : '';
-                const description = document.querySelector('meta[name="description"]')
-                    ? document.querySelector('meta[name="description"]').getAttribute('content')
-                    : '';
-                const image = document.querySelector('meta[property="og:image"]')
-                    ? document.querySelector('meta[property="og:image"]').getAttribute('content')
-                    : '';
-
-                return { url, title, description, image };
-            })
-            .catch((error) => {
-                return { url, error: 'Failed to fetch metadata' };
-            });
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        })
+        .then(response => response.text())
+        .then(body => {
+            const $ = cheerio.load(body); 
+            const title = $('title').text() || '';
+            const description = $('meta[name="description"]').attr('content') || '';
+            const image = $('meta[property="og:image"]').attr('content') || '';
+            return { url, title, description, image };
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            return { url, error: 'Failed to fetch metadata' };
+        });
     });
 
     Promise.all(metadataPromises)

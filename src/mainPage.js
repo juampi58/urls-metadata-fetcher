@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Button, Typography, TextField, IconButton, Box, Alert } from '@mui/material';
 import DataCard from './components/DataCard/DataCard';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -46,16 +45,28 @@ const MainPage = () => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         setError('');
         setMetadata([]);
-        axios
-            .post('/fetch-metadata', { urls }, { headers: { 'CSRF-Token': csrfToken } })
-            .then((response) => {
-                setMetadata(response.data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setError('Failed to fetch metadata. Please check the URLs and try again.');
-                setLoading(false);
-            });
+        fetch('/fetch-metadata', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken  // Assuming csrfToken is a variable that holds your token
+            },
+            body: JSON.stringify({ urls })  // Convert the `urls` object to a JSON string
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();  // Parse the JSON response
+        })
+        .then(data => {
+            setMetadata(data);  // Use the response data
+            setLoading(false);
+        })
+        .catch(() => {
+            setError('Failed to fetch metadata. Please check the URLs and try again.');
+            setLoading(false);
+        });
     };
 
     return (

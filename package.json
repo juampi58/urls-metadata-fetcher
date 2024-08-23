@@ -11,19 +11,20 @@
     "@mui/icons-material": "^5.16.7",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.7",
-    "axios": "^1.7.4",
+    "cheerio": "^1.0.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csurf": "^1.11.0",
     "express-rate-limit": "^7.4.0",
     "express-validator": "^7.2.0",
     "helmet": "^7.1.0",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node --inspect --max-old-space-size=2048 backend/index.js",
+    "server": "node --max-old-space-size=2048 backend/index.js",
     "client": "react-scripts start",
     "test": "jest",
     "build": "react-scripts build",
@@ -62,19 +63,19 @@
   },
   "proxy": "http://localhost:5001",
   "devDependencies": {
-    "@testing-library/user-event": "^13.5.0",
-    "react-scripts": "^3.0.1",
-    "web-vitals": "^2.1.4",
     "@babel/preset-env": "^7.25.4",
     "@babel/preset-react": "^7.24.7",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^13.5.0",
     "chai": "^5.1.1",
     "concurrently": "^8.2.2",
     "eslint": "^6.8.0",
     "mocha": "^10.7.3",
     "prettier": "^3.3.3",
     "puppeteer-core": "^23.1.1",
-    "supertest": "^7.0.0"
+    "react-scripts": "^3.0.1",
+    "supertest": "^7.0.0",
+    "web-vitals": "^2.1.4"
   }
 }
