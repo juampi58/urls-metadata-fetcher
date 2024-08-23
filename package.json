@@ -19,17 +19,14 @@
     "express-rate-limit": "^7.4.0",
     "express-validator": "^7.2.0",
     "helmet": "^7.1.0",
-    "nvm": "^0.0.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-hook-form": "^7.52.2",
     "react-scripts": "^3.0.1",
-    "web-vitals": "^2.1.4",
-    "concurrently": "^8.2.2"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node --max-old-space-size=1024 backend/index.js",
+    "server": "node --inspect --max-old-space-size=1024 backend/index.js",
     "client": "react-scripts build",
     "test": "jest",
     "build": "react-scripts build",
@@ -73,11 +70,9 @@
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "chai": "^5.1.1",
-    "concurrently": "^8.2.2",
     "eslint": "^6.8.0",
     "mocha": "^10.7.3",
     "prettier": "^3.3.3",
-    "puppeteer": "^23.1.1",
     "puppeteer-core": "^23.1.1",
     "supertest": "^7.0.0"
   }
