@@ -11,8 +11,10 @@ import cors from 'cors';
 import { body, validationResult } from 'express-validator';
 import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.set('trust proxy', 1 )
@@ -31,7 +33,19 @@ const limiter = rateLimit({
     legacyHeaders: false, 
   });
 
+
+app.use(express.static(path.join(__dirname, '../build')));
+
+
 app.use(helmet());
+app.use(
+    helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'"], // Default policy
+        scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
+      },
+    })
+  );
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -40,7 +54,6 @@ app.use(express.json());
 const csrfProtection = csrf({ cookie: true });
 app.use(csrfProtection);
 
-app.use(bp.json());
 app.use(limiter);
 
 app.use((err, req, res, next) => {
@@ -53,10 +66,6 @@ app.use((err, req, res, next) => {
   });
 
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-  
-app.use(express.static(join(__dirname, '/build')));
 
 app.get('/csrf-token', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
@@ -105,7 +114,7 @@ app.post('/fetch-metadata',csrfProtection,[
 });
 
 app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, '../build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
   });
 
 const port = process.env.PORT || 5001;
